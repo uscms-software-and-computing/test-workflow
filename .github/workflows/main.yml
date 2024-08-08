@@ -20,19 +20,25 @@ jobs:
       #     endpoint: https://example.com
       #     configuration: '{ "method": "GET", "headers": {"Authorization": "Bearer ${{ secrets.API_TOKEN }}"} }'
       
-      - name: Fetch API Data 📦
+      # - name: Fetch API Data 📦
+      #   uses: JamesIves/fetch-api-data-action@v2
+      #   with:
+      #     # The token endpoint is requested first. This retrieves the access token for the other endpoint.
+      #     token-endpoint: https://uscms-openproject.k8s.accre.vanderbilt.edu/oauth/token
+      #     # The configuration contains secrets held in the Settings/Secrets menu of the repository.
+      #     token-configuration: '{ "method": "POST", "body": {"client_id": "${{ secrets.client_id }}", "client_secret": "${{ secrets.client_secret }}"} }'
+      #     # Once the token endpoint has fetched then this endpoint is requested.
+      #     # endpoint: https://example.com/data
+      #     endpoint: 'http://uscms-openproject.k8s.accre.vanderbilt.edu/api/v3/work_packages?filters=[{"project": {"operator": "=", "values": ["4","5","35","6","8"]}}]&pageSize=1000'
+      #     # The bearer token here is returned from the TOKEN_ENDPOINT call. The returned data looks like so: {data: {access_token: '123'}}, meaning it can be accessed using the triple bracket syntax.
+      #     configuration: '{ "method": "GET", "headers": {"Authorization": "Bearer {{{ data.access_token }}}"} }'  
+
+      - name: Fetch API Data
         uses: JamesIves/fetch-api-data-action@v2
         with:
-          # The token endpoint is requested first. This retrieves the access token for the other endpoint.
-          token-endpoint: https://uscms-openproject.k8s.accre.vanderbilt.edu/oauth/token
-          # The configuration contains secrets held in the Settings/Secrets menu of the repository.
-          token-configuration: '{ "method": "POST", "body": {"client_id": "${{ secrets.client_id }}", "client_secret": "${{ secrets.client_secret }}"} }'
-          # Once the token endpoint has fetched then this endpoint is requested.
-          # endpoint: https://example.com/data
           endpoint: 'http://uscms-openproject.k8s.accre.vanderbilt.edu/api/v3/work_packages?filters=[{"project": {"operator": "=", "values": ["4","5","35","6","8"]}}]&pageSize=1000'
-          # The bearer token here is returned from the TOKEN_ENDPOINT call. The returned data looks like so: {data: {access_token: '123'}}, meaning it can be accessed using the triple bracket syntax.
-          configuration: '{ "method": "GET", "headers": {"Authorization": "Bearer {{{ data.access_token }}}"} }'  
-
+          configuration: '{ "method": "GET", "headers": {"Authorization": "Basic ${{ secrets.openproj_id }}"} }'
+          
       - name: Build and Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
